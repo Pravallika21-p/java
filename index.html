@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      background-color: white;
+      border: 2px solid #333;
+      cursor: pointer;
+    }
+    .cell:hover {
+      background-color: #eee;
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Tic Tac Toe</h1>
+    <div id="grid" class="grid">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+    <div id="message" class="message"></div>
+    <button onclick="resetGame()">Restart</button>
+  </div>
+
+  <script>
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let isGameActive = true;
+    const winningConditions = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    const cells = document.querySelectorAll('.cell');
+    const message = document.getElementById('message');
+
+    cells.forEach(cell => {
+      cell.addEventListener('click', () => {
+        if (cell.textContent === "" && isGameActive) {
+          playMove(cell);
+        }
+      });
+    });
+
+    function playMove(cell) {
+      const index = cell.getAttribute('data-index');
+      if (board[index] === "" && isGameActive) {
+        board[index] = currentPlayer;
+        cell.textContent = currentPlayer;
+        checkWinner();
+        switchPlayer();
+      }
+    }
+
+    function switchPlayer() {
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+    }
+
+    function checkWinner() {
+      let roundWon = false;
+      for (let i = 0; i < winningConditions.length; i++) {
+        const condition = winningConditions[i];
+        const a = board[condition[0]];
+        const b = board[condition[1]];
+        const c = board[condition[2]];
+
+        if (a === "" || b === "" || c === "") {
+          continue;
+        }
+        if (a === b && b === c) {
+          roundWon = true;
+          break;
+        }
+      }
+
+      if (roundWon) {
+        message.textContent = `Player ${currentPlayer} wins!`;
+        isGameActive = false;
+        return;
+      }
+
+      if (!board.includes("")) {
+        message.textContent = "It's a draw!";
+        isGameActive = false;
+        return;
+      }
+    }
+
+    function resetGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      cells.forEach(cell => cell.textContent = "");
+      currentPlayer = "X";
+      isGameActive = true;
+      message.textContent = "";
+    }
+  </script>
+</body>
+</html>
